@@ -1,10 +1,15 @@
 module ActiveApi
   class Base
-    attr_reader :object, :objects, :options
+    attr_reader :object, :objects, :options, :parent
     def initialize(object_or_array, options = {})
       @objects = [object_or_array].flatten.compact
       @object = @objects.first
       @options = options
+      @parent = options[:parent]
+    end
+
+    def courier
+      Courier.new(options)
     end
 
     def node_name
