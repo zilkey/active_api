@@ -128,7 +128,7 @@ module ActiveApi
       end
     end
 
-    describe "#api_options" do
+    describe "#courier" do
       it "is a Courier object" do
         api = Base.new(@some_object, :parent => "foo")
         api.courier.should be_kind_of(Courier)
@@ -145,6 +145,19 @@ module ActiveApi
       context "when passed a parent option" do
         api = Base.new(@some_object, :parent => "foo")
         api.parent.should == "foo"
+      end
+    end
+
+    describe "#build_xml" do
+      before do
+        class Foo
+          attr_reader :foo
+        end
+      end
+
+      it "returns a builder object" do
+        api = Base.new(Foo.new, :parent => "bar")
+        api.build_xml.should be_kind_of(Nokogiri::XML::Builder)
       end
     end
 
