@@ -1,5 +1,5 @@
 module ActiveApi
-  class Base
+  class Element
     attr_reader :object
     def initialize(object)
       @object = object

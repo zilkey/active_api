@@ -7,3 +7,7 @@ require 'active_api'
 Spec::Runner.configure do |config|
   
 end
+
+class SomeData
+  attr_accessor :id, :name
+end

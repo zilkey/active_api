@@ -1,1 +1,2 @@
-require 'active_api/base'
+require 'active_api/element'
+require 'active_api/collection'

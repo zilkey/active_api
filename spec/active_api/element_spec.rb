@@ -10,13 +10,13 @@ describe ActiveApi::Element do
 
   describe ".new" do
     it "should return a nil object when nil" do
-      api = ActiveApi::Collection.new([])
-      api.objects.should be_empty
+      api = ActiveApi::Element.new(nil)
+      api.object.should be_nil
     end
 
     it "should return the object when not nil" do
-      api = ActiveApi::Collection.new([@some_object])
-      api.objects.should == [@some_object]
+      api = ActiveApi::Element.new(@some_object)
+      api.object.should == @some_object
     end
   end
 
