@@ -31,13 +31,12 @@ module ActiveApi
       end
 
       def build_xml(builder = Nokogiri::XML::Builder.new)
+        builder.send node_name do |xml|
+          fields.each do |field|
+            xml.send field.name, object.send(field.name)
+          end
+        end
         builder
-        #builder.send node_name, :id => object.id do |xml|
-        #  self.class.attributes.each do |type, options|
-        #    formatter(type).new(object, options.merge(api_options)).build_xml(xml)
-        #  end
-        #end
-        #builder
       end
 
       def should_build?

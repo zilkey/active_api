@@ -180,19 +180,6 @@ module ActiveApi
       end
     end
 
-    describe "#build_xml" do
-      before do
-        class Foo
-          attr_reader :foo
-        end
-      end
-
-      it "returns a builder object" do
-        api = Elements::Base.new(Foo.new, :parent => "bar")
-        api.build_xml.should be_kind_of(Nokogiri::XML::Builder)
-      end
-    end
-
     describe "#content" do
       context "when passed field" do
         it "returns the value of the field on the object" do
@@ -345,6 +332,32 @@ module ActiveApi
         end
       end
 
+    end
+
+    describe "#build_xml" do
+      before do
+        @article = Article.new
+        @article.title = Faker::Company.bs
+      end
+
+      it "returns a builder object" do
+        api = Elements::Base.new(@article)
+        api.build_xml.should be_kind_of(Nokogiri::XML::Builder)
+      end
+
+      it "adds the doctype" do
+        field = Field.new :type => :string, :name => :title
+        api = Elements::Base.new(@article, :fields => [field])
+        doc = api.build_xml.doc
+        doc.to_s.should include(%Q|<?xml version="1.0"?>|)
+      end
+
+      it "builds all of the fields given" do
+        field = Field.new :type => :string, :name => :title
+        api = Elements::Base.new(@article, :fields => [field])
+        doc = api.build_xml.doc
+        doc.xpath("/article/title").inner_text.should == @article.title
+      end
     end
 
   end
