@@ -4,9 +4,9 @@ module ActiveApi
   describe Base do
 
     before do
-      @some_object = SomeData.new
-      @some_object.id = 1
-      @some_object.name = "some name"
+      @article = Article.new
+      @article.id = 1
+      @article.title = "Some title"
     end
 
     describe ".new" do
@@ -24,8 +24,8 @@ module ActiveApi
         end
 
         it "should return the array when given a non-empty array" do
-          api = Base.new([@some_object])
-          api.objects.should == [@some_object]
+          api = Base.new([@article])
+          api.objects.should == [@article]
         end
       end
 
@@ -36,8 +36,8 @@ module ActiveApi
         end
 
         it "should return an array of the object when given an object" do
-          api = Base.new(@some_object)
-          api.objects.should == [@some_object]
+          api = Base.new(@article)
+          api.objects.should == [@article]
         end
       end
     end
@@ -50,10 +50,10 @@ module ActiveApi
         end
 
         it "should return the first object in the array when given a non-empty array" do
-          @some_other_object = SomeData.new
-          @some_other_object.id = 2
-          api = Base.new([@some_object, @some_other_object])
-          api.object.should == @some_object
+          @article2 = Article.new
+          @article2.id = 2
+          api = Base.new([@article, @article2])
+          api.object.should == @article
         end
       end
 
@@ -64,8 +64,8 @@ module ActiveApi
         end
 
         it "should return the object when given an object" do
-          api = Base.new(@some_object)
-          api.object.should == @some_object
+          api = Base.new(@article)
+          api.object.should == @article
         end
       end
     end
@@ -87,15 +87,15 @@ module ActiveApi
 
       context "when the array is not empty, and the node name is not passed" do
         it "returns the name of the first object in the array" do
-          api = Base.new([@some_object])
-          api.node_name.should == "some_data"
+          api = Base.new([@article])
+          api.node_name.should == "article"
         end
       end
 
       context "when the object is not nil" do
         it "returns the name of the object" do
-          api = Base.new(@some_object)
-          api.node_name.should == "some_data"
+          api = Base.new(@article)
+          api.node_name.should == "article"
         end
       end
 
@@ -115,14 +115,14 @@ module ActiveApi
 
       context "when the array is not empty and node_name was passed" do
         it "returns the passed in node name" do
-          api = Base.new([@some_object], :node_name => "foo")
+          api = Base.new([@article], :node_name => "foo")
           api.node_name.should == "foo"
         end
       end
 
       context "when the object is not nil and node_name was passed" do
         it "returns the passed in node name" do
-          api = Base.new(@some_object, :node_name => "foo")
+          api = Base.new(@article, :node_name => "foo")
           api.node_name.should == "foo"
         end
       end
@@ -130,12 +130,12 @@ module ActiveApi
 
     describe "#courier" do
       it "is a Courier object" do
-        api = Base.new(@some_object, :parent => "foo")
+        api = Base.new(@article, :parent => "foo")
         api.courier.should be_kind_of(Courier)
       end
 
       it "sets the options correctly" do
-        api = Base.new(@some_object, :parent => "foo", :node_name => "bar")
+        api = Base.new(@article, :parent => "foo", :node_name => "bar")
         api.courier.ancestors.should == ["foo"]
         api.courier.node_name.should == "bar"
       end
@@ -143,7 +143,7 @@ module ActiveApi
 
     describe "#parent" do
       context "when passed a parent option" do
-        api = Base.new(@some_object, :parent => "foo")
+        api = Base.new(@article, :parent => "foo")
         api.parent.should == "foo"
       end
     end

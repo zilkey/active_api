@@ -4,9 +4,9 @@ module ActiveApi
   describe Element do
 
     before do
-      @some_object = SomeData.new
-      @some_object.id = 1
-      @some_object.name = "some name"
+      @article = Article.new
+      @article.id = 1
+      @article.title = "some name"
     end
 
   end

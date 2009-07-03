@@ -5,13 +5,13 @@ module ActiveApi
 
     describe "#class_symbol" do
       it "returns what is passed in" do
-        Definition.new(:foo).class_symbol.should == :foo
+        Definition.new(:article).class_symbol.should == :article
       end
     end
 
     describe "#fields" do
       it "is empty by default" do
-        Definition.new(:foo).fields.should be_empty
+        Definition.new(:article).fields.should be_empty
       end
     end
 
