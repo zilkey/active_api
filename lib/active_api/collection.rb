@@ -1,8 +1,4 @@
 module ActiveApi
-  class Collection
-    attr_reader :objects
-    def initialize(objects)
-      @objects = objects
-    end
+  class Collection < Base
   end
 end
