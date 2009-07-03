@@ -1,17 +1,39 @@
 module ActiveApi
-  module Nodes
+  module Elements
     class Base
-      attr_reader :options, :object
+      attr_reader :object, :objects, :options, :parent
 
-      def initialize(object, options = {})
-        @object = object
+      def initialize(object_or_array, options = {})
+        @objects = [object_or_array].flatten.compact
+        @object = @objects.first
         @options = options
+        @parent = options[:parent]
+      end
+
+      def courier
+        Courier.new(options)
       end
 
       def content
         return options[:value] if options.keys.include?(:value)
         return object_value if options.keys.include?(:field)
         raise "You must specify either :field or :value"
+      end
+
+      def node_name
+        name = options[:node_name]
+        name = (@object.present? ? @object.class.to_s.underscore.downcase : nil ) if name.nil?
+        name
+      end
+
+      def build_xml(builder = Nokogiri::XML::Builder.new)
+        builder
+        #builder.send node_name, :id => object.id do |xml|
+        #  self.class.attributes.each do |type, options|
+        #    formatter(type).new(object, options.merge(api_options)).build_xml(xml)
+        #  end
+        #end
+        #builder
       end
 
       def should_build?
@@ -29,17 +51,6 @@ module ActiveApi
       def object_value
         object.send(options[:field])
       end
-    end
-
-    class Date < Base
-
-      protected
-
-      def object_value
-        value = object.send(options[:field])
-        value.present? ? value.xmlschema : nil
-      end
-
     end
   end
 end
