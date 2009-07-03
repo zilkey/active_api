@@ -15,5 +15,27 @@ module ActiveApi
       end
     end
 
+    describe "#field" do
+      it "adds a field with the options" do
+        definition = Definition.new(:article)
+        definition.field :name => :title, :type => :string
+        definition.fields.length.should == 1
+        definition.fields.first.type.should == :string
+        definition.fields.first.name.should == :title
+      end
+    end
+
+    [:string, :date, :datetime, :reference, :collection].each do |method_name|
+      describe "##{method_name}" do
+        it "adds a #{method_name} field with the options" do
+          definition = Definition.new(:article)
+          definition.send method_name, :title
+          definition.fields.length.should == 1
+          definition.fields.first.type.should == method_name
+          definition.fields.first.name.should == :title
+        end
+      end
+    end
+
   end
 end

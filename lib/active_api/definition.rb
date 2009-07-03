@@ -6,8 +6,15 @@ module ActiveApi
       @fields = []
     end
 
-    def string(name)
-      self.fields << Field.new(:type => :string, :name => name)
+    [:string, :date, :datetime, :reference, :collection].each do |method_name|
+      define_method method_name do |name, *args|
+        options = args.first || Hash.new
+        field options.merge(:name => name, :type => method_name)
+      end
+    end
+
+    def field(options)
+      self.fields << Field.new(options)
     end
   end
 end
