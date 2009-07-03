@@ -10,6 +10,10 @@ module ActiveApi
         @parent = options[:parent]
       end
 
+      def fields
+        fields = [options[:fields]].flatten.compact
+      end
+
       def courier
         Courier.new(options)
       end
