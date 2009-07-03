@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'activesupport'
 require 'nokogiri'
+require 'active_api/nodes'
 require 'active_api/courier'
 require 'active_api/field'
 require 'active_api/schema'
