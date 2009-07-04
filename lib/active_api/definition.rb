@@ -20,11 +20,11 @@ module ActiveApi
     end
 
     def belongs_to(name, options = {})
-      field options.merge(:name => name, :type => :parent, :klass => Element::Complex)
+      field options.merge(:name => name, :type => :belongs_to, :klass => Element::Complex)
     end
 
     def has_many(name, options = {})
-      field options.merge(:name => name, :type => :children, :klass => Element::Collection)
+      field options.merge(:name => name, :type => :has_many, :klass => Element::Collection)
     end
 
     def field(options)

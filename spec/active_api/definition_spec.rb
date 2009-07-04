@@ -5,19 +5,19 @@ module ActiveApi
 
     describe "#class_symbol" do
       it "returns what is passed in" do
-        Definition.new(:article).class_symbol.should == :article
+        Definition.new(:name => :article).name.should == :article
       end
     end
 
     describe "#fields" do
       it "is empty by default" do
-        Definition.new(:article).fields.should be_empty
+        Definition.new(:name => :article).fields.should be_empty
       end
     end
 
     describe "#field" do
       it "adds a field with the options" do
-        definition = Definition.new(:article)
+        definition = Definition.new(:name => :article)
         definition.field :name => :title, :type => :string
         definition.fields.length.should == 1
         definition.fields.first.type.should == :string
@@ -25,10 +25,10 @@ module ActiveApi
       end
     end
 
-    [:string, :date, :datetime, :parent, :children].each do |method_name|
+    [:string, :has_many, :belongs_to].each do |method_name|
       describe "##{method_name}" do
         it "adds a #{method_name} field with the options" do
-          definition = Definition.new(:article)
+          definition = Definition.new(:name => :article)
           definition.send method_name, :title
           definition.fields.length.should == 1
           definition.fields.first.type.should == method_name

@@ -23,7 +23,6 @@ module ActiveApi
       it "works" do
         element = Element::Collection.new [@article], :node => :article
         doc = element.build_xml.doc
-        puts doc.to_xml
       end
     end
   end
