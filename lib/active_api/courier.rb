@@ -7,5 +7,13 @@ module ActiveApi
       @node_name = options[:node_name]
     end
 
+    def singular_node_name
+
+    end
+
+    def plural_node_name
+
+    end
+
   end
 end

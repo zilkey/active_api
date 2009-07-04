@@ -1,16 +1,30 @@
 module ActiveApi
   class Definition
-    attr_reader :class_symbol, :fields
-    def initialize(class_symbol)
-      @class_symbol = class_symbol
-      @fields = []
+    attr_reader :name, :fields
+
+    def initialize(options)
+      @name   = options[:name]
+      @fields = options[:fields] || []
     end
 
-    [:string, :date, :datetime, :reference, :collection].each do |method_name|
-      define_method method_name do |name, *args|
-        options = args.first || Hash.new
-        field options.merge(:name => name, :type => method_name)
-      end
+    def singular_name
+      name.to_s.singularize
+    end
+
+    def plural_name
+      name.to_s.pluralize
+    end
+
+    def string(name, options = {})
+      field options.merge(:name => name, :type => :string, :klass => Element::Simple)
+    end
+
+    def belongs_to(name, options = {})
+      field options.merge(:name => name, :type => :parent, :klass => Element::Complex)
+    end
+
+    def has_many(name, options = {})
+      field options.merge(:name => name, :type => :children, :klass => Element::Collection)
     end
 
     def field(options)

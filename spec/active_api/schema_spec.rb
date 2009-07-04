@@ -4,17 +4,17 @@ module ActiveApi
   describe Schema do
 
     after do
-      Schema.reset_inheritable_attributes
+      Schema.definitions = []
     end
 
     describe ".define" do
       describe "with a single field" do
         before do
-          class Schema
-            define :article do |t|
-              t.string :title
-            end
-          end
+          #class Schema
+          #  define :article do |t|
+          #    t.string :title
+          #  end
+          #end
         end
 
         it "adds one definition of the correct type" do
@@ -35,12 +35,12 @@ module ActiveApi
 
       describe "with a multiple fields" do
         before do
-          class Schema
-            define :article do |t|
-              t.string :title
-              t.collection :comments
-            end
-          end
+          #class Schema
+          #  define :article do |t|
+          #    t.string :title
+          #    t.collection :comments
+          #  end
+          #end
         end
 
         it "adds one definition of the correct type article" do

@@ -25,7 +25,7 @@ module ActiveApi
       end
     end
 
-    [:string, :date, :datetime, :reference, :collection].each do |method_name|
+    [:string, :date, :datetime, :parent, :children].each do |method_name|
       describe "##{method_name}" do
         it "adds a #{method_name} field with the options" do
           definition = Definition.new(:article)
