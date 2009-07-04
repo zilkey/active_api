@@ -8,8 +8,10 @@ module ActiveApi
         @node = options[:node]
       end
 
-      def build_xml(builder)
-        builder.send node, text
+      def build_xml(_builder = Nokogiri::XML::Builder.new)
+        _builder.tap do |builder|
+          builder.send node, text
+        end
       end
 
     end

@@ -9,14 +9,15 @@ module ActiveApi
         @node     = options[:node]
       end
 
-      def build_xml(builder = Nokogiri::XML::Builder.new)
-        builder.send node.to_s.pluralize do |xml|
-          objects.each do |object|
-            element = Complex.new object, :node => node
-            element.build_xml(xml)
+      def build_xml(_builder = Nokogiri::XML::Builder.new)
+        _builder.tap do |builder|
+          builder.send node.to_s.pluralize do |xml|
+            objects.each do |object|
+              element = Complex.new object, :node => node
+              element.build_xml(xml)
+            end
           end
         end
-        builder
       end
 
     end
