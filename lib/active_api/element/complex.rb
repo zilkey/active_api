@@ -18,8 +18,12 @@ module ActiveApi
         builder.send node.to_s.singularize do |xml|
           definition = Schema.definitions.detect{|definition| definition.name.to_s == node.to_s.singularize}
           definition.fields.each do |field|
-            element = field.klass.new value(field), :node => field.name, :parents => parents
-            element.build_xml(xml)
+            name = field.name_for(object)
+            puts name.inspect
+            if name.present? 
+              element = field.klass.new value(field), :node => name, :parents => parents
+              element.build_xml(xml)
+            end
           end
         end
       end

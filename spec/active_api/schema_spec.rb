@@ -58,8 +58,7 @@ module ActiveApi
           field2.name.should == :comments
         end
       end
-
     end
-
+    
   end
 end

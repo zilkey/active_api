@@ -88,6 +88,42 @@ module ActiveApi
       end
     end
 
+    describe "allows for polymorphism" do
+      before do
+        class Schema
+          define :article do |t|
+            t.string :title
+          end
+
+          define :user do |t|
+            t.string :username
+          end
+
+          define :comment do |t|
+            t.belongs_to :commentable, :polymorphic => {
+              "Article" => :article,
+              "User" => :user
+            }
+          end
+        end
+
+        @article = Article.new :title => Faker::Company.bs
+        @user = User.new :username => Faker::Internet.user_name
+        @comment1 = Comment.new :commentable => @article
+        @comment2 = Comment.new :commentable => @user
+        @comment3 = Comment.new :commentable => nil
+      end
+
+      it "stores a reference to the node ancestors" do
+        element = Element::Collection.new [@comment1, @comment2, @comment3], :node => :comment
+        doc = element.build_xml.doc
+        doc.xpath("/comments/comment").length.should == 3
+        doc.xpath("/comments/comment/article/title").inner_text.should == @article.title
+        doc.xpath("/comments/comment/user/username").inner_text.should == @user.username
+        doc.xpath("/comments/comment")[2].inner_text.should be_empty
+      end
+    end
+
   end
 end
 
