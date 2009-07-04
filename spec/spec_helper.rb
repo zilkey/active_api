@@ -15,7 +15,7 @@ class Author
 end
 
 class Article
-  attr_accessor :id, :author_id, :title, :published_on
+  attr_accessor :id, :author_id, :title, :published_on, :comments
 end
 
 class User
@@ -23,6 +23,6 @@ class User
 end
 
 class Comment
-  attr_accessor :id, :article_id, :user_id, :text
+  attr_accessor :id, :article_id, :article, :user_id, :text
 end
 
