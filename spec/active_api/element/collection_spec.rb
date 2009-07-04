@@ -23,6 +23,7 @@ module ActiveApi
       it "works" do
         element = Element::Collection.new [@article], :node => :article
         doc = element.build_xml.doc
+        doc.xpath("/articles/article/title").first.inner_text.should == @article.title
       end
     end
   end
