@@ -14,7 +14,6 @@ require 'active_api/element/collection'
 require 'active_api/element/complex'
 require 'active_api/element/simple'
 
-require 'active_api/courier'
 require 'active_api/field'
 require 'active_api/schema'
 require 'active_api/definition'
