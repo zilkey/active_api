@@ -23,6 +23,6 @@ class User
 end
 
 class Comment
-  attr_accessor :id, :article_id, :article, :user_id, :text
+  attr_accessor :id, :article, :article, :user, :text
 end
 

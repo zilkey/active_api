@@ -3,12 +3,13 @@ module ActiveApi
     class Complex
       include Builder
 
-      attr_reader :object, :node
+      attr_reader :object, :node, :parents
 
       def initialize(object, options = {})
         @object = object
         @node   = options[:node]
-        @options = options
+        @parents = options[:parents] || {}
+        @parents[node.to_s.singularize.to_sym] = object
       end
 
       protected
@@ -17,7 +18,7 @@ module ActiveApi
         builder.send node.to_s.singularize do |xml|
           definition = Schema.definitions.detect{|definition| definition.name.to_s == node.to_s.singularize}
           definition.fields.each do |field|
-            element = field.klass.new value(field), :node => field.name
+            element = field.klass.new value(field), :node => field.name, :parents => parents
             element.build_xml(xml)
           end
         end
