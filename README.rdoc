@@ -1,6 +1,97 @@
-= active_api
+= ActiveApi
 
-Description goes here.
+ActiveApi allows you to define an XML schema in Ruby, and use that schema to convert ruby objects to xml.
+
+== Theory
+
+I think that exposing your data via XML is not the job of the model.  Instead, it's the job of a class (or classes) that is specifically designed to translate your model schema into a schema appropriate for public consumption.
+
+A good api tool will have built-in support for:
+
+ * XSD or DTD generation
+ * Versioning
+ * The ability to represent your model in a way that is not tightly coupled to the model itself
+
+ActiveApi attempts to do this.
+
+== Usage
+
+You define a schema like so:
+
+    class Schema
+      define :article do |t|
+        t.string   :title
+        t.has_many :comments
+      end
+
+      define :comment do |t|
+        t.belongs_to  :user
+        t.string      :article_title, :value => proc{|element|
+          element.object.article.title
+        }
+      end
+
+      define :user do |t|
+        t.string :email
+      end
+    end
+
+To create xml from this schema:
+
+    ActiveApi::Element::Collection.new [@article1, @article2], :node => :article
+
+Which will give you xml output that looks like this:
+
+    <?xml version="1.0"?>
+    <articles>
+      <article>
+        <title>target efficient applications</title>
+        <comments>
+          <comment>
+            <article_title>target efficient applications</article_title>
+            <user>
+              <username>foo</username>
+            </user>
+          </comment>
+        </comments>
+      </article>
+      <article>
+        <title>recontextualize viral e-services</title>
+        <comments>
+          <comment>
+            <article_title>recontextualize viral e-services</article_title>
+            <user>
+              <username>foo</username>
+            </user>
+          </comment>
+        </comments>
+      </article>
+    </articles>
+
+== Features
+
+You define your schema completely separately from your data.  So you could in theory render multiple types of objects with the same schema, provided that they have the same interface.  You could also render a single object in any number of ways.
+
+You can choose to have the builder send methods on your object, or provide more complex values by using the :value => proc{} syntax.
+
+The element keeps track of all of it's ancestors, so you can emit certain elements conditionally based on what has come before them.
+
+The Schema definition just creates an array of Ruby objects, which you could use to create documentation.
+
+== Implementation
+
+ActiveApi uses's Nokogori::XML::Builder to create the xml nodes.  As such, the creation of the xml is fast.  The rest of the code likely needs major refactoring to be performant and have a small footprint with large datasets.
+
+== Authors
+
+While I (Jeff Dean) wrote all of the code in this repo, the code was inspired by pairing on a similar project with:
+
+ * Mike Dalessio
+ * Peter Jaros
+
+== Development
+
+See the issue tracker on github for a complete list.
 
 == Copyright
 
