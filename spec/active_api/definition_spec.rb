@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec/spec_helper'
 
 module ActiveApi
   describe Definition do
@@ -25,7 +25,7 @@ module ActiveApi
       end
     end
 
-    [:string, :has_many, :belongs_to].each do |method_name|
+    [:string, :has_many, :belongs_to, :has_one].each do |method_name|
       describe "##{method_name}" do
         it "adds a #{method_name} field with the options" do
           definition = Definition.new(:name => :article)
@@ -36,6 +36,6 @@ module ActiveApi
         end
       end
     end
-
+    
   end
 end
