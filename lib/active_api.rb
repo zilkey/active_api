@@ -9,6 +9,7 @@ require 'active_api/xs/integer'
 require 'active_api/xs/string'
 require 'active_api/xs/time'
 
+require 'active_api/element/builder'
 require 'active_api/element/collection'
 require 'active_api/element/complex'
 require 'active_api/element/simple'
