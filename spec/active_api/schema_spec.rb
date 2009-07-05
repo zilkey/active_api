@@ -1,22 +1,15 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec/spec_helper'
 
 module ActiveApi
   describe Schema do
 
     before do
-      Schema.reset_inheritable_attributes
-      Schema.definitions = []
       class Schema
         define :article do |t|
           t.string :title
           t.has_many :comments
         end
       end
-    end
-
-    after do
-      Schema.reset_inheritable_attributes
-      Schema.definitions = []
     end
 
     describe ".define" do

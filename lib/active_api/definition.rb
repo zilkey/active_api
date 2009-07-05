@@ -11,6 +11,10 @@ module ActiveApi
       field options.merge(:name => name, :type => type, :field_type => :attribute)
     end
 
+    def element(name, type = :string, options = {})
+      send type, name, options
+    end
+
     def string(name, options = {})
       field options.merge(:name => name, :type => :string, :klass => Element::Simple)
     end
@@ -25,10 +29,6 @@ module ActiveApi
 
     def has_many(name, options = {})
       field options.merge(:name => name, :type => :has_many, :klass => Element::Collection)
-    end
-
-    def element(name, type, options = {})
-      send type, name, options
     end
 
     def field(options)

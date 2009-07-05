@@ -8,8 +8,6 @@ module ActiveApi
       @article.id = 1
       @article.title = "Some title"
 
-      Schema.reset_inheritable_attributes
-      Schema.definitions = []
       class Schema
         define :article do |t|
           t.string :title
@@ -17,11 +15,6 @@ module ActiveApi
       end
     end
 
-    after do
-      Schema.reset_inheritable_attributes
-      Schema.definitions = []
-    end
-    
     describe "with a definition with fields" do
       it "emits the node and all fields within the node" do
         element = Element::Complex.new @article, :node => :article

@@ -7,7 +7,16 @@ require 'faker'
 require 'rr'
 require 'domain'
 
+module SchemaHelper
+  def reset_schema
+    ActiveApi::Schema.reset_inheritable_attributes
+    ActiveApi::Schema.definitions = []
+  end
+end
+
 Spec::Runner.configure do |config|
   config.mock_with :rr
+  config.include SchemaHelper
+  config.before(:each) { reset_schema }
 end
 
