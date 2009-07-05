@@ -34,7 +34,7 @@ You define a schema like so:
       end
 
       schema.define :user do |t|
-        t.string :email
+        t.string :username, :value => :user_name
       end
     end
 
