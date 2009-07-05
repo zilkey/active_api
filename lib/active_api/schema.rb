@@ -22,9 +22,10 @@ module ActiveApi
       @definitions = []
     end
 
-    def define(name)
-      definition = Definition.new :definition_name => name
-      yield definition
+    def define(name, options = {})
+      options[:definition_name] = name
+      definition = Definition.new options
+      yield definition if block_given?
       definitions << definition
     end
 

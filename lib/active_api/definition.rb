@@ -1,9 +1,10 @@
 module ActiveApi
   class Definition
-    attr_reader :definition_name, :fields
+    attr_reader :definition_name, :fields, :builder_class
 
     def initialize(options)
       @definition_name  = options[:definition_name]
+      @builder_class    = options[:builder_class] || ComplexType.to_s
       @fields           = options[:fields] || []
     end
 

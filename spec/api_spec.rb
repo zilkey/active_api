@@ -226,6 +226,30 @@ module ActiveApi
       end
     end
 
+    describe "custom builders" do
+      before do
+        @schema = Schema.version(:v1) do |xsl|
+          xsl.define :article, :builder_class => "ActiveApi::MyCustomClass"
+        end
+
+        class MyCustomClass < ActiveApi::ComplexType
+          def build(builder)
+            builder.send :foo, :bar => "baz" do |xml|
+              xml.send :woot, "lol"
+            end
+          end
+        end
+
+        @article = Article.new :id => 456
+      end
+
+      it "uses the custom builder class" do
+        element = Schema.find(:v1).build_xml [@article], :node => :article
+        doc = element.doc
+        doc.xpath("/articles/foo[@bar='baz']/woot").first.inner_text.should == "lol"
+      end
+    end
+
   end
 end
 

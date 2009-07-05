@@ -1,6 +1,7 @@
 module ActiveApi
   class ComplexType
     include Builder
+    include HasDefinition
 
     attr_reader :object, :node, :parents, :schema
 
@@ -40,10 +41,6 @@ module ActiveApi
           attribute.append(attributes)
         end
       end
-    end
-
-    def definition
-      schema.definitions.detect{|definition| definition.definition_name.to_s == node.to_s.singularize}
     end
 
     def value(field)
