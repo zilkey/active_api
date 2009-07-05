@@ -31,7 +31,7 @@ module ActiveApi
       def attributes
         {}.tap do |attributes|
           definition.attributes.each do |field|
-            attributes[field.name] = object.send(field.name)
+            Simple.new(field.name, object.send(field.name)).append(attributes)
           end
         end
       end

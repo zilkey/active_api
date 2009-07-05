@@ -1,13 +1,6 @@
-require 'rubygems'
 require 'activesupport'
 require 'nokogiri'
-
-require 'active_api/xs/boolean'
-require 'active_api/xs/date'
-require 'active_api/xs/decimal'
-require 'active_api/xs/integer'
-require 'active_api/xs/string'
-require 'active_api/xs/time'
+require 'uri'
 
 require 'active_api/element/builder'
 require 'active_api/element/collection'
