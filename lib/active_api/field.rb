@@ -1,21 +1,21 @@
 module ActiveApi
   class Field
-    attr_reader :type, :name, :klass, :value, :polymorphic, :field_type
+    attr_reader :type, :name, :klass, :value, :choice, :field_type
 
     def initialize(options = {})
       @type         = options[:type]
       @name         = options[:name]
       @klass        = options[:klass]
       @value        = options[:value]
-      @polymorphic  = options[:polymorphic]
+      @choice       = options[:choice]
       @field_type   = options[:field_type] || :element
     end
 
     def name_for(object)
-      if polymorphic
+      if choice
         value = object.send(name)
         return nil if value.nil?
-        return polymorphic[value.class.to_s]
+        return choice[value.class.to_s]
       else
         name
       end

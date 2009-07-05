@@ -190,7 +190,7 @@ module ActiveApi
       end
     end
 
-    describe "with belongs_to elements marked as polymorphic" do
+    describe "with belongs_to elements marked as choice" do
       before do
         @schema = Schema.version(:v1) do |xsl|
           xsl.define :article do |t|
@@ -202,7 +202,7 @@ module ActiveApi
           end
 
           xsl.define :comment do |t|
-            t.belongs_to :commentable, :polymorphic => {
+            t.belongs_to :commentable, :choice => {
               "Article" => :article,
               "User" => :user
             }
