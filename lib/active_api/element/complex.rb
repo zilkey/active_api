@@ -15,17 +15,29 @@ module ActiveApi
       protected
 
       def build(builder)
-        builder.send node.to_s.singularize do |xml|
-          definition = Schema.definitions.detect{|definition| definition.name.to_s == node.to_s.singularize}
-          definition.fields.each do |field|
+        builder.send "#{node.to_s.singularize}_", attributes do |xml|
+          definition.elements.each do |field|
             name = field.name_for(object)
-            puts name.inspect
-            if name.present? 
-              element = field.klass.new value(field), :node => name, :parents => parents
+            if name.present?
+              element = field.klass.new value(field),
+                                        :node => name,
+                                        :parents => parents
               element.build_xml(xml)
             end
           end
         end
+      end
+
+      def attributes
+        {}.tap do |attributes|
+          definition.attributes.each do |field|
+            attributes[field.name] = object.send(field.name)
+          end
+        end
+      end
+
+      def definition
+        Schema.definitions.detect{|definition| definition.name.to_s == node.to_s.singularize}
       end
 
       def value(field)

@@ -13,7 +13,7 @@ module ActiveApi
       protected
 
       def build(builder)
-        builder.send node, text
+        builder.send "#{node}_", text
       end
 
     end

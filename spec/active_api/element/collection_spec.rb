@@ -28,6 +28,36 @@ module ActiveApi
       end
     end
 
+    describe "allows for attributes" do
+      before do
+        Schema.define :article do |t|
+          t.attribute :id
+        end
+        @article = Article.new :id => 456
+      end
+
+      it "works" do
+        element = Element::Collection.new [@article], :node => :article
+        doc = element.build_xml.doc
+        doc.xpath("/articles/article[@id=456]").should be
+      end
+    end
+
+    describe "allows for element calls" do
+      before do
+        Schema.define :article do |t|
+          t.element :id, :string
+        end
+        @article = Article.new :id => 456
+      end
+
+      it "works" do
+        element = Element::Collection.new [@article], :node => :article
+        doc = element.build_xml.doc
+        doc.xpath("/articles/article/id").inner_text.should == "456"
+      end
+    end
+
     describe "parent references" do
       before do
         class Schema

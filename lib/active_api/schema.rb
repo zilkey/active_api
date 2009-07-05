@@ -1,4 +1,5 @@
 # define :article do |t|
+#   t.attribute  :author
 #   t.parent     :author
 #   t.string     :title
 #   t.children   :comments
@@ -20,7 +21,7 @@ module ActiveApi
 
     class << self
       def define(name)
-        definition = Definition.new(:name => name)
+        definition = Definition.new :name => name
         yield definition
         write_inheritable_array :definitions, [definition]
       end

@@ -14,7 +14,7 @@ module ActiveApi
       protected
 
       def build(builder)
-        builder.send node.to_s.pluralize do |xml|
+        builder.send "#{node.to_s.pluralize}_" do |xml|
           objects.each do |object|
             element = Complex.new object, :node => node, :parents => parents
             element.build_xml(xml)

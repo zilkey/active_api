@@ -31,8 +31,28 @@ module ActiveApi
       field options.merge(:name => name, :type => :has_many, :klass => Element::Collection)
     end
 
+    def element(name, type, options = {})
+      send type, name, options
+    end
+
+    def attribute(name, options = {})
+      field options.merge(:name => name, :type => :string, :klass => :attribute)
+    end
+
     def field(options)
       self.fields << Field.new(options)
+    end
+
+    def attributes
+      fields.select do |field|
+        field.klass == :attribute
+      end
+    end
+
+    def elements
+      fields.select do |field|
+        field.klass != :attribute
+      end
     end
   end
 end
