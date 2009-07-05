@@ -19,6 +19,10 @@ module ActiveApi
       field options.merge(:name => name, :type => :string, :klass => Element::Simple)
     end
 
+    def date(name, options = {})
+      field options.merge(:name => name, :type => :date, :klass => Element::Simple)
+    end
+
     def belongs_to(name, options = {})
       field options.merge(:name => name, :type => :belongs_to, :klass => Element::Complex)
     end

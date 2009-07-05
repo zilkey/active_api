@@ -21,7 +21,8 @@ module ActiveApi
             if name.present?
               element = field.klass.new value(field),
                                         :node => name,
-                                        :parents => parents
+                                        :parents => parents,
+                                        :format => field.type
               element.build_xml(xml)
             end
           end
@@ -31,7 +32,11 @@ module ActiveApi
       def attributes
         {}.tap do |attributes|
           definition.attributes.each do |field|
-            Simple.new(field.name, object.send(field.name)).append(attributes)
+            name = field.name_for(object)
+            attribute = Simple.new value(field),
+                                   :node => name,
+                                   :format => field.type
+            attribute.append(attributes)
           end
         end
       end

@@ -1,40 +1,109 @@
-#Token: A string that does not contain line feeds, carriage returns, tabs, leading or trailing spaces, or multiple spaces
-#Normalized: A string that does not contain line feeds, carriage returns, or tabs
-#byte  	A signed 8-bit integer
-#decimal 	A decimal value
-#int 	A signed 32-bit integer
-#integer 	An integer value
-#long 	A signed 64-bit integer
-#negativeInteger 	An integer containing only negative values (..,-2,-1)
-#nonNegativeInteger 	An integer containing only non-negative values (0,1,2,..)
-#nonPositiveInteger 	An integer containing only non-positive values (..,-2,-1,0)
-#positiveInteger 	An integer containing only positive values (1,2,..)
-#short 	A signed 16-bit integer
-#unsignedLong 	An unsigned 64-bit integer
-#unsignedInt 	An unsigned 32-bit integer
-#unsignedShort 	An unsigned 16-bit integer
-#unsignedByte 	An unsigned 8-bit integer
-#date  	Defines a date value
-#dateTime 	Defines a date and time value
-#duration 	Defines a time interval
-#gDay 	Defines a part of a date - the day (DD)
-#gMonth 	Defines a part of a date - the month (MM)
-#gMonthDay 	Defines a part of a date - the month and day (MM-DD)
-#gYear 	Defines a part of a date - the year (YYYY)
-#gYearMonth 	Defines a part of a date - the year and month (YYYY-MM)
-#time 	Defines a time value
-
+#:anyURI
+#:base64Binary
+#:boolean
+#:date
+#:dateTime
+#      :dateTimeStamp
+#:decimal
+#      :integer
+#            :long
+#                  :int
+#                        :short
+#                              :byte
+#            :nonNegativeInteger
+#                  :positiveInteger
+#                  :unsignedLong
+#                        :unsignedInt
+#                              :unsignedShort
+#                                    :unsignedByte
+#            :nonPositiveInteger
+#                  :negativeInteger
+#:double
+#:duration
+#      :dayTimeDuration
+#      :yearMonthDuration
+#:float
+#:gDay
+#:gMonth
+#:gMonthDay
+#:gYear
+#:gYearMonth
+#:hexBinary
+#:NOTATION
+#:precisionDecimal
+#:QName
+#:string
+#      :normalizedString
+#            :token
+#                  :language
+#                  :Name
+#                        :NCName
+#                              :ENTITY
+#                              :ID
+#                              :IDREF
+#                  :NMTOKEN
+#:time
 module ActiveApi
   module Element
     class Simple
       include Builder
 
       class << self
-        def default_format
+        def formats
+          [
+            {:any_uri => :anyURI},
+            :base64Binary,
+            :boolean,
+            :date,
+            :dateTime,
+            :dateTimeStamp,
+            :decimal,
+            :integer,
+            :long,
+            :int,
+            :short,
+            :byte,
+            :nonNegativeInteger,
+            :positiveInteger,
+            :unsignedLong,
+            :unsignedInt,
+            :unsignedShort,
+            :unsignedByte,
+            :nonPositiveInteger,
+            :negativeInteger,
+            :double,
+            :duration,
+            :dayTimeDuration,
+            :yearMonthDuration,
+            :float,
+            :gDay,
+            :gMonth,
+            :gMonthDay,
+            :gYear,
+            :gYearMonth,
+            :hexBinary,
+            {:notation => :NOTATION},
+            :precisionDecimal,
+            {:qname => :QName},
+            :string,
+            :normalizedString,
+            :token,
+            :language,
+            {:name => :Name},
+            {:nc_name => :NCName},
+            {:entity => :ENTITY},
+            {:id => :ID},
+            {:idref => :IDREF},
+            {:nmtoken => :NMTOKEN},
+            :time
+          ]
+        end
+
+        def default_format_proc
           proc { |value| value }
         end
 
-        def formats
+        def format_procs
           {
             :normalized_string => proc {|value| value },
             :token =>             proc {|value| value },
@@ -65,7 +134,7 @@ module ActiveApi
       end
 
       def formatted_text
-        (self.class.formats[format] || self.class.default_format).call(text)
+        (self.class.format_procs[format] || self.class.default_format_proc).call(text)
       end
 
     end

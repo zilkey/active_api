@@ -48,6 +48,30 @@ module ActiveApi
       end
     end
 
+    describe "with other data types" do
+      before do
+        @article = Article.new :published_on => Date.parse("3/5/1956")
+      end
+
+      it "emits the correctly formatted element" do
+        Schema.define :article do |t|
+          t.date :published_on
+        end
+        element = Element::Collection.new [@article], :node => :article
+        doc = element.build_xml.doc
+        doc.xpath("/articles/article/published_on").first.inner_text.should == "1956-03-05"
+      end
+
+      it "emits the correctly formatted element" do
+        Schema.define :article do |t|
+          t.attribute :published_on, :type => :date
+        end
+        element = Element::Collection.new [@article], :node => :article
+        doc = element.build_xml.doc
+        doc.xpath("/articles/article[@published_on=1956-03-05]").should be
+      end
+    end
+
     describe "with a has_many element" do
       before do
         Schema.define :article do |t|
@@ -74,16 +98,18 @@ module ActiveApi
       before do
         class Schema
           define :article do |t|
+            t.attribute :id, :value => proc {|attribute| "foo" }
+            t.string :id, :value => proc {|element| "foo" }
             t.has_many :comments
           end
 
           define :comment do |t|
-            t.string      :article_title, :value => proc{|comment| comment.object.article.title }
+            t.string      :article_title, :value => proc{|element| element.object.article.title }
             t.belongs_to  :user
           end
 
           define :user do |t|
-            t.string :title, :value => proc{|author| author.parents[:article].title }
+            t.string :title, :value => proc{|element| element.parents[:article].title }
           end
         end
 
@@ -96,6 +122,18 @@ module ActiveApi
 
         @article1.comments = [@comment1]
         @article2.comments = [@comment2]
+      end
+
+      it "emits the value of the value proc for attributes" do
+        element = Element::Collection.new [@article1], :node => :article
+        doc = element.build_xml.doc
+        doc.xpath("/articles/article[@id=foo]").should be
+      end
+
+      it "emits the value of the value proc for elements" do
+        element = Element::Collection.new [@article1], :node => :article
+        doc = element.build_xml.doc
+        doc.xpath("/articles/article/id").first.inner_text.should == "foo"
       end
 
       it "emits the value of the value proc, which is passed an element containing a reference to the object" do
