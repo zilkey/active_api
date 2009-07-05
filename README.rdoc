@@ -8,9 +8,9 @@ I think that exposing your data via XML is not the job of the model.  Instead, i
 
 A good api tool will have built-in support for:
 
- * XSD or DTD generation
- * Versioning
- * The ability to represent your model in a way that is not tightly coupled to the model itself
+* XSD or DTD generation
+* Versioning
+* The ability to represent your model in a way that is not tightly coupled to the model itself
 
 ActiveApi attempts to do this.
 
@@ -96,16 +96,16 @@ ActiveApi uses's Nokogori::XML::Builder to create the xml nodes.  As such, the c
 
 While I (Jeff Dean) wrote all of the code in this repo, the code was inspired by pairing on a similar project with:
 
- * Mike Dalessio
- * Peter Jaros
+* Mike Dalessio
+* Peter Jaros
 
 == Development
 
 The basic idea here is to create a DSL that can provide:
 
-  * A valid xml schema that you can link to and distribute
-  * A means to document your code
-  * A bunch of useful, time-saving ways to easily translate your model to a consumable xml document
+* A valid xml schema that you can link to and distribute
+* A means to document your code
+* A bunch of useful, time-saving ways to easily translate your model to a consumable xml document
 
 See the issue tracker on github for a complete list.
 
