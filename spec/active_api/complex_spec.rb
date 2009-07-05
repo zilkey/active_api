@@ -1,7 +1,7 @@
 require 'spec/spec_helper'
 
 module ActiveApi
-  describe Element::Complex do
+  describe ComplexType do
 
     before do
       @article = Article.new
@@ -17,7 +17,7 @@ module ActiveApi
 
     describe "with a definition with fields" do
       it "emits the node and all fields within the node" do
-        element = Element::Complex.new @article, :node => :article, :schema => @schema
+        element = ComplexType.new @article, :node => :article, :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/article/title").first.inner_text.should == @article.title
       end

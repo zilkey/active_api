@@ -28,5 +28,9 @@ module ActiveApi
       definitions << definition
     end
 
+    def build_xml(objects, options)
+      Collection.new(objects, options.merge(:schema => self)).build_xml
+    end
+
   end
 end

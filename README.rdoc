@@ -18,34 +18,39 @@ ActiveApi attempts to do this.
 
 You define a schema like so:
 
-    class Schema
-      define :article do |t|
-        t.string   :title
-        t.has_many :comments
+    Schema.version(:v1) do |schema|
+      schema.define :article do |t|
+        t.attribute :id
+        t.string    :title
+        t.date      :published_on
+        t.has_many  :comments
       end
 
-      define :comment do |t|
+      schema.define :comment do |t|
         t.belongs_to  :user
         t.string      :article_title, :value => proc{|element|
           element.object.article.title
         }
       end
 
-      define :user do |t|
+      schema.define :user do |t|
         t.string :email
       end
     end
 
 To create xml from this schema:
 
-    ActiveApi::Element::Collection.new [@article1, @article2], :node => :article
+    @v1 = ActiveApi::Schema.find(:v1)
+    @element = @v1.build_xml [@article1, @article2], :node => :article
+    @element.to_xml
 
 Which will give you xml output that looks like this:
 
     <?xml version="1.0"?>
     <articles>
-      <article>
+      <article id="1">
         <title>target efficient applications</title>
+        <published_on>2004-08-22</published_on>
         <comments>
           <comment>
             <article_title>target efficient applications</article_title>
@@ -55,8 +60,9 @@ Which will give you xml output that looks like this:
           </comment>
         </comments>
       </article>
-      <article>
+      <article id="2">
         <title>recontextualize viral e-services</title>
+        <published_on>2004-12-05</published_on>
         <comments>
           <comment>
             <article_title>recontextualize viral e-services</article_title>
@@ -78,6 +84,10 @@ The element keeps track of all of it's ancestors, so you can emit certain elemen
 
 The Schema definition just creates an array of Ruby objects, which you could use to create documentation.
 
+You define your schema versions using whatever versioning scheme you want - could be a string, symbol or any other object.  You can render the same objects with different schemas easily. This library is totally agnostic as to how or if you version your schemas.
+
+The schema defining DSL allows you to define any valid XSL data format.
+
 == Implementation
 
 ActiveApi uses's Nokogori::XML::Builder to create the xml nodes.  As such, the creation of the xml is fast.  The rest of the code likely needs major refactoring to be performant and have a small footprint with large datasets.
@@ -90,6 +100,12 @@ While I (Jeff Dean) wrote all of the code in this repo, the code was inspired by
  * Peter Jaros
 
 == Development
+
+The basic idea here is to create a DSL that can provide:
+
+  * A valid xml schema that you can link to and distribute
+  * A means to document your code
+  * A bunch of useful, time-saving ways to easily translate your model to a consumable xml document
 
 See the issue tracker on github for a complete list.
 

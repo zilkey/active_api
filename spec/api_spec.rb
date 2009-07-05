@@ -3,6 +3,23 @@ require 'spec/spec_helper'
 module ActiveApi
   describe "Defining a schema" do
 
+    describe "calling a collection from a schema" do
+      before do
+        @schema = Schema.version(:v1) do |xsl|
+          xsl.define :article do |t|
+            t.element :id, :string
+          end
+        end
+        @article = Article.new :id => 456
+      end
+
+      it "emits the string element" do
+        element = Schema.find(:v1).build_xml [@article], :node => :article
+        doc = element.doc
+        doc.xpath("/articles/article/id").inner_text.should == "456"
+      end
+    end
+
     describe "with an element of type string" do
       before do
         @schema = Schema.version(:v1) do |xsl|
@@ -14,7 +31,7 @@ module ActiveApi
       end
 
       it "emits the string element" do
-        element = Element::Collection.new [@article], :node => :article, :schema => @schema
+        element = Collection.new [@article], :node => :article, :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article/id").inner_text.should == "456"
       end
@@ -31,7 +48,7 @@ module ActiveApi
       end
 
       it "emits the string element" do
-        element = Element::Collection.new [@article], :node => :article, :schema => @schema
+        element = Collection.new [@article], :node => :article, :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article/title").first.inner_text.should == @article.title
       end
@@ -48,7 +65,7 @@ module ActiveApi
       end
 
       it "emits the string attribute" do
-        element = Element::Collection.new [@article], :node => :article, :schema => @schema
+        element = Collection.new [@article], :node => :article, :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article[@id=456]").should be
       end
@@ -65,7 +82,7 @@ module ActiveApi
             t.date :published_on
           end
         end
-        element = Element::Collection.new [@article], :node => :article, :schema => @schema
+        element = Collection.new [@article], :node => :article, :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article/published_on").first.inner_text.should == "1956-03-05"
       end
@@ -76,7 +93,7 @@ module ActiveApi
             t.attribute :published_on, :type => :date
           end
         end
-        element = Element::Collection.new [@article], :node => :article, :schema => @schema
+        element = Collection.new [@article], :node => :article, :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article[@published_on=1956-03-05]").should be
       end
@@ -100,7 +117,7 @@ module ActiveApi
           t.string :text
         end
 
-        element = Element::Collection.new [@article],
+        element = Collection.new [@article],
                                           :node => :article,
                                           :schema => @schema
         doc = element.build_xml.doc
@@ -139,7 +156,7 @@ module ActiveApi
       end
 
       it "emits the value of the value proc for attributes" do
-        element = Element::Collection.new [@article1],
+        element = Collection.new [@article1],
                                           :node => :article,
                                           :schema => @schema
         doc = element.build_xml.doc
@@ -147,7 +164,7 @@ module ActiveApi
       end
 
       it "emits the value of the value proc for elements" do
-        element = Element::Collection.new [@article1],
+        element = Collection.new [@article1],
                                           :node => :article,
                                           :schema => @schema
         doc = element.build_xml.doc
@@ -155,7 +172,7 @@ module ActiveApi
       end
 
       it "emits the value of the value proc, which is passed an element containing a reference to the object" do
-        element = Element::Collection.new [@article1],
+        element = Collection.new [@article1],
                                           :node => :article,
                                           :schema => @schema
         doc = element.build_xml.doc
@@ -163,7 +180,7 @@ module ActiveApi
       end
 
       it "emits the value of the value proc, which is passed an element containing a reference all ancestor objects" do
-        element = Element::Collection.new [@article1, @article2],
+        element = Collection.new [@article1, @article2],
                                           :node => :article,
                                           :schema => @schema
         doc = element.build_xml.doc
@@ -200,7 +217,7 @@ module ActiveApi
       end
 
       it "uses the name of the class to lookup the definition to be used" do
-        element = Element::Collection.new [@comment1, @comment2, @comment3], :node => :comment, :schema => @schema
+        element = Collection.new [@comment1, @comment2, @comment3], :node => :comment, :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/comments/comment").length.should == 3
         doc.xpath("/comments/comment/article/title").inner_text.should == @article.title

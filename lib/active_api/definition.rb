@@ -15,32 +15,32 @@ module ActiveApi
       send type, name, options
     end
 
-    Element::Simple.formats.each do |hash|
+    SimpleType.formats.each do |hash|
       hash.each do |standard_name, xml_name|
         define_method standard_name do |name, *options|
           options = options.first || {}
-          field options.merge(:name => name, :type => standard_name, :klass => Element::Simple)
+          field options.merge(:name => name, :type => standard_name, :klass => SimpleType)
         end
 
         if standard_name != xml_name
           define_method xml_name do |name, *options|
             options = options.first || {}
-            field options.merge(:name => name, :type => standard_name, :klass => Element::Simple)
+            field options.merge(:name => name, :type => standard_name, :klass => SimpleType)
           end
         end
       end
     end
 
     def belongs_to(name, options = {})
-      field options.merge(:name => name, :type => :belongs_to, :klass => Element::Complex)
+      field options.merge(:name => name, :type => :belongs_to, :klass => ComplexType)
     end
 
     def has_one(name, options = {})
-      field options.merge(:name => name, :type => :has_one, :klass => Element::Complex)
+      field options.merge(:name => name, :type => :has_one, :klass => ComplexType)
     end
 
     def has_many(name, options = {})
-      field options.merge(:name => name, :type => :has_many, :klass => Element::Collection)
+      field options.merge(:name => name, :type => :has_many, :klass => Collection)
     end
 
     def attributes
