@@ -286,6 +286,58 @@ module ActiveApi
       end
     end
 
+    describe "specifying custom definition classes with a string" do
+      before do
+        class MyDefinitionClass < Definition
+          def timestamps
+            date_time :created_at
+            date_time :updated_at
+          end
+        end
+
+        @schema = Schema.version(:v1, :definition_class => "ActiveApi::MyDefinitionClass") do |xsl|
+          xsl.define :article do |t|
+            t.timestamps
+          end
+        end
+
+        @article = Article.new :created_at => Date.parse("12/21/1945"), :updated_at => Date.parse("4/5/1992")
+      end
+
+      it "uses the custom builder class" do
+        element = Schema.find(:v1).build_xml [@article], :node => :article
+        doc = element.doc
+        doc.xpath("/articles/article/created_at").first.inner_text.should be_starts_with("1945-12-21")
+        doc.xpath("/articles/article/updated_at").first.inner_text.should be_starts_with("1992-04-05")
+      end
+    end
+
+    describe "specifying custom definition classes with a class" do
+      before do
+        class MyDefinitionClass < Definition
+          def timestamps
+            date_time :created_at
+            date_time :updated_at
+          end
+        end
+
+        @schema = Schema.version(:v1, :definition_class => MyDefinitionClass) do |xsl|
+          xsl.define :article do |t|
+            t.timestamps
+          end
+        end
+
+        @article = Article.new :created_at => Date.parse("12/21/1945"), :updated_at => Date.parse("4/5/1992")
+      end
+
+      it "uses the custom builder class" do
+        element = Schema.find(:v1).build_xml [@article], :node => :article
+        doc = element.doc
+        doc.xpath("/articles/article/created_at").first.inner_text.should be_starts_with("1945-12-21")
+        doc.xpath("/articles/article/updated_at").first.inner_text.should be_starts_with("1992-04-05")
+      end
+    end
+
   end
 end
 

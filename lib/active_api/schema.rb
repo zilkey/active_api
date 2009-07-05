@@ -4,8 +4,9 @@ module ActiveApi
     class_inheritable_array :versions
 
     class << self
-      def version(version)
-        schema = Schema.new version
+      def version(version, options = {})
+        options[:definition_class] ||= Definition
+        schema = Schema.new version, options
         yield schema
         write_inheritable_array :versions, [schema]
         schema
@@ -16,15 +17,16 @@ module ActiveApi
       end
     end
 
-    attr_reader :version, :definitions
-    def initialize(version)
+    attr_reader :version, :definitions, :definition_class
+    def initialize(version, options = {})
       @version     = version
       @definitions = []
+      @definition_class = options[:definition_class]
     end
 
     def define(name, options = {})
       options[:definition_name] = name
-      definition = Definition.new options
+      definition = definition_class.to_s.constantize.new options
       yield definition if block_given?
       definitions << definition
     end

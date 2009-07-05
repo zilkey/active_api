@@ -30,7 +30,7 @@ class Author < ObjectHelper
 end
 
 class Article < ObjectHelper
-  fields :id, :author, :title, :published_on, :comments
+  fields :id, :author, :title, :published_on, :comments, :created_at, :updated_at
 end
 
 class User < ObjectHelper
