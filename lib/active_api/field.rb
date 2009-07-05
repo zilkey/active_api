@@ -1,6 +1,6 @@
 module ActiveApi
   class Field
-    attr_reader :type, :name, :klass, :value, :polymorphic
+    attr_reader :type, :name, :klass, :value, :polymorphic, :field_type
 
     def initialize(options = {})
       @type         = options[:type]
@@ -8,6 +8,7 @@ module ActiveApi
       @klass        = options[:klass]
       @value        = options[:value]
       @polymorphic  = options[:polymorphic]
+      @field_type   = options[:field_type] || :element
     end
 
     def name_for(object)

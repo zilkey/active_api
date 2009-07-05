@@ -7,12 +7,8 @@ module ActiveApi
       @fields = options[:fields] || []
     end
 
-    def singular_name
-      name.to_s.singularize
-    end
-
-    def plural_name
-      name.to_s.pluralize
+    def attribute(name, type = :string, options = {})
+      field options.merge(:name => name, :type => type, :field_type => :attribute)
     end
 
     def string(name, options = {})
@@ -35,24 +31,29 @@ module ActiveApi
       send type, name, options
     end
 
-    def attribute(name, options = {})
-      field options.merge(:name => name, :type => :string, :klass => :attribute)
-    end
-
     def field(options)
       self.fields << Field.new(options)
     end
 
     def attributes
       fields.select do |field|
-        field.klass == :attribute
+        field.field_type == :attribute
       end
     end
 
     def elements
       fields.select do |field|
-        field.klass != :attribute
+        field.field_type == :element
       end
     end
+
+    def singular_name
+      name.to_s.singularize
+    end
+
+    def plural_name
+      name.to_s.pluralize
+    end
+
   end
 end
