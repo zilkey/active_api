@@ -250,6 +250,42 @@ module ActiveApi
       end
     end
 
+    describe "specifying a symbol as a value proc" do
+      before do
+        @schema = Schema.version(:v1) do |xsl|
+          xsl.define :article do |t|
+            t.string :foo, :value => :title
+          end
+        end
+
+        @article = Article.new :title => Faker::Company.bs
+      end
+
+      it "uses the custom builder class" do
+        element = Schema.find(:v1).build_xml [@article], :node => :article
+        doc = element.doc
+        doc.xpath("/articles/article/foo").first.inner_text.should == @article.title
+      end
+    end
+
+    describe "specifying a string literal as a value" do
+      before do
+        @schema = Schema.version(:v1) do |xsl|
+          xsl.define :article do |t|
+            t.string :foo, :value => "some value"
+          end
+        end
+
+        @article = Article.new :title => Faker::Company.bs
+      end
+
+      it "uses the custom builder class" do
+        element = Schema.find(:v1).build_xml [@article], :node => :article
+        doc = element.doc
+        doc.xpath("/articles/article/foo").first.inner_text.should == "some value"
+      end
+    end
+
   end
 end
 

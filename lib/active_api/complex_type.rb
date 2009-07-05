@@ -44,7 +44,15 @@ module ActiveApi
     end
 
     def value(field)
-      field.value ? field.value.call(self) : object.send(field.name)
+      if field.value.nil?
+        object.send(field.name)
+      elsif field.value.is_a?(Symbol)
+        object.send(field.value)
+      elsif field.value.is_a?(String)
+        field.value
+      else
+        field.value.call(self)
+      end
     end
   end
 end
