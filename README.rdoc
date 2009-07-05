@@ -74,6 +74,66 @@ Which will give you xml output that looks like this:
       </article>
     </articles>
 
+== Extending
+
+ActiveApi is highly extensible.  The general pattern used to extend ActiveApi is to subclass the default ActiveApi implementation, and specify that you'd like to use your subclass instead.
+
+For example, if you are working with a database that has audit columns such as timestamps, you might want to do this:
+
+    class MyDefinitionClass < Definition
+      def timestamps
+        date_time :created_at
+        date_time :updated_at
+      end
+    end
+
+    @schema = Schema.version(:v1, :definition_class => MyDefinitionClass) do |xsl|
+      xsl.define :article do |t|
+        t.timestamps
+      end
+    end
+
+    Schema.find(:v1).build_xml [@article], :node => :article
+
+Which will produce the following xml:
+
+    <?xml version="1.0"?>
+    <articles>
+      <article>
+        <created_at>1945-12-21T00:00:00+00:00</created_at>
+        <updated_at>1992-04-05T00:00:00+00:00</updated_at>
+      </article>
+    </articles>
+
+NOTE: when specifying custom definition classes, those classes must be loaded before calling Schema.version
+
+You can also create custom classes for any element you define, like so:
+
+    @schema = Schema.version(:v1) do |xsl|
+      xsl.define :article, :builder_class => "MyCustomClass"
+    end
+
+    class MyCustomClass < ActiveApi::ComplexType
+      def build(builder)
+        builder.send :foo, :bar => "baz" do |xml|
+          xml.send :woot, "lol"
+        end
+      end
+    end
+
+    Schema.find(:v1).build_xml [@article], :node => :article
+
+Which will produce the following xml:
+
+    <?xml version="1.0"?>
+    <articles>
+      <foo bar="baz">
+        <woot>lol</woot>
+      </foo>
+    </articles>
+
+NOTE: since the builder classes are evaluated at runtime, you can specify a string name for the class, and the class does _not_ have to be loaded before calling Schema.version
+
 == Features
 
 You define your schema completely separately from your data.  So you could in theory render multiple types of objects with the same schema, provided that they have the same interface.  You could also render a single object in any number of ways.
