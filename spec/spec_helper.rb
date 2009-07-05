@@ -10,7 +10,7 @@ require 'domain'
 module SchemaHelper
   def reset_schema
     ActiveApi::Schema.reset_inheritable_attributes
-    ActiveApi::Schema.definitions = []
+    ActiveApi::Schema.versions = []
   end
 end
 

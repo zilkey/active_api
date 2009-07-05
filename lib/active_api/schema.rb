@@ -1,30 +1,31 @@
-# define :article do |t|
-#   t.attribute  :author
-#   t.parent     :author
-#   t.string     :title
-#   t.children   :comments
-# end
-#
-# define :author do |t|
-#   t.string   :name
-#   t.children :articles
-# end
-# 
-# define :comment do |t|
-#   t.parent   :article
-#   t.parent   :user
-#   t.string   :text
-# end
 module ActiveApi
+
   class Schema
-    class_inheritable_array :definitions
+    class_inheritable_array :versions
 
     class << self
-      def define(name)
-        definition = Definition.new :definition_name => name
-        yield definition
-        write_inheritable_array :definitions, [definition]
+      def version(version)
+        schema = Schema.new version
+        yield schema
+        write_inheritable_array :versions, [schema]
+        schema
       end
+
+      def find(version)
+        versions.detect { |schema| schema.version == version }
+      end
+    end
+
+    attr_reader :version, :definitions
+    def initialize(version)
+      @version     = version
+      @definitions = []
+    end
+
+    def define(name)
+      definition = Definition.new :definition_name => name
+      yield definition
+      definitions << definition
     end
 
   end

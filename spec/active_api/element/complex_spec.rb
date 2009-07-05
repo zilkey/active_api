@@ -8,8 +8,8 @@ module ActiveApi
       @article.id = 1
       @article.title = "Some title"
 
-      class Schema
-        define :article do |t|
+      @schema = Schema.version(:v1) do |xsl|
+        xsl.define :article do |t|
           t.string :title
         end
       end
@@ -17,7 +17,7 @@ module ActiveApi
 
     describe "with a definition with fields" do
       it "emits the node and all fields within the node" do
-        element = Element::Complex.new @article, :node => :article
+        element = Element::Complex.new @article, :node => :article, :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/article/title").first.inner_text.should == @article.title
       end

@@ -5,14 +5,16 @@ module ActiveApi
 
     describe "with an element of type string" do
       before do
-        Schema.define :article do |t|
-          t.element :id, :string
+        @schema = Schema.version(:v1) do |xsl|
+          xsl.define :article do |t|
+            t.element :id, :string
+          end
         end
         @article = Article.new :id => 456
       end
 
       it "emits the string element" do
-        element = Element::Collection.new [@article], :node => :article
+        element = Element::Collection.new [@article], :node => :article, :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article/id").inner_text.should == "456"
       end
@@ -20,14 +22,16 @@ module ActiveApi
 
     describe "with a string" do
       before do
-        Schema.define :article do |t|
-          t.string   :title
+        @schema = Schema.version(:v1) do |xsl|
+          xsl.define :article do |t|
+            t.string   :title
+          end
         end
         @article = Article.new :title => Faker::Company.bs
       end
 
       it "emits the string element" do
-        element = Element::Collection.new [@article], :node => :article
+        element = Element::Collection.new [@article], :node => :article, :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article/title").first.inner_text.should == @article.title
       end
@@ -35,14 +39,16 @@ module ActiveApi
 
     describe "with an attribute of type string" do
       before do
-        Schema.define :article do |t|
-          t.attribute :id
+        @schema = Schema.version(:v1) do |xsl|
+          xsl.define :article do |t|
+            t.attribute :id
+          end
         end
         @article = Article.new :id => 456
       end
 
       it "emits the string attribute" do
-        element = Element::Collection.new [@article], :node => :article
+        element = Element::Collection.new [@article], :node => :article, :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article[@id=456]").should be
       end
@@ -54,19 +60,23 @@ module ActiveApi
       end
 
       it "emits the correctly formatted element" do
-        Schema.define :article do |t|
-          t.date :published_on
+        @schema = Schema.version(:v1) do |xsl|
+          xsl.define :article do |t|
+            t.date :published_on
+          end
         end
-        element = Element::Collection.new [@article], :node => :article
+        element = Element::Collection.new [@article], :node => :article, :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article/published_on").first.inner_text.should == "1956-03-05"
       end
 
       it "emits the correctly formatted element" do
-        Schema.define :article do |t|
-          t.attribute :published_on, :type => :date
+        @schema = Schema.version(:v1) do |xsl|
+          xsl.define :article do |t|
+            t.attribute :published_on, :type => :date
+          end
         end
-        element = Element::Collection.new [@article], :node => :article
+        element = Element::Collection.new [@article], :node => :article, :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article[@published_on=1956-03-05]").should be
       end
@@ -74,8 +84,10 @@ module ActiveApi
 
     describe "with a has_many element" do
       before do
-        Schema.define :article do |t|
-          t.has_many :comments
+        @schema = Schema.version(:v1) do |xsl|
+          xsl.define :article do |t|
+            t.has_many :comments
+          end
         end
 
         @article = Article.new :title => Faker::Company.bs
@@ -84,11 +96,13 @@ module ActiveApi
       end
 
       it "emits each of the child objects" do
-        Schema.define :comment do |t|
+        @schema.define :comment do |t|
           t.string :text
         end
 
-        element = Element::Collection.new [@article], :node => :article
+        element = Element::Collection.new [@article],
+                                          :node => :article,
+                                          :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article/comments/comment/text").first.inner_text.should == @comment.text
       end
@@ -96,19 +110,19 @@ module ActiveApi
 
     describe "with custom value procs" do
       before do
-        class Schema
-          define :article do |t|
+        @schema = Schema.version(:v1) do |xsl|
+          xsl.define :article do |t|
             t.attribute :id, :value => proc {|attribute| "foo" }
-            t.string :id, :value => proc {|element| "foo" }
-            t.has_many :comments
+            t.string    :id, :value => proc {|element| "foo" }
+            t.has_many  :comments
           end
 
-          define :comment do |t|
+          xsl.define :comment do |t|
             t.string      :article_title, :value => proc{|element| element.object.article.title }
             t.belongs_to  :user
           end
 
-          define :user do |t|
+          xsl.define :user do |t|
             t.string :title, :value => proc{|element| element.parents[:article].title }
           end
         end
@@ -125,25 +139,33 @@ module ActiveApi
       end
 
       it "emits the value of the value proc for attributes" do
-        element = Element::Collection.new [@article1], :node => :article
+        element = Element::Collection.new [@article1],
+                                          :node => :article,
+                                          :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article[@id=foo]").should be
       end
 
       it "emits the value of the value proc for elements" do
-        element = Element::Collection.new [@article1], :node => :article
+        element = Element::Collection.new [@article1],
+                                          :node => :article,
+                                          :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article/id").first.inner_text.should == "foo"
       end
 
       it "emits the value of the value proc, which is passed an element containing a reference to the object" do
-        element = Element::Collection.new [@article1], :node => :article
+        element = Element::Collection.new [@article1],
+                                          :node => :article,
+                                          :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article/comments/comment/article_title").first.inner_text.should == @article1.title
       end
 
       it "emits the value of the value proc, which is passed an element containing a reference all ancestor objects" do
-        element = Element::Collection.new [@article1, @article2], :node => :article
+        element = Element::Collection.new [@article1, @article2],
+                                          :node => :article,
+                                          :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article").length.should == 2
         doc.xpath("/articles/article/comments/comment/user/title").first.inner_text.should == @article1.title
@@ -153,16 +175,16 @@ module ActiveApi
 
     describe "with belongs_to elements marked as polymorphic" do
       before do
-        class Schema
-          define :article do |t|
+        @schema = Schema.version(:v1) do |xsl|
+          xsl.define :article do |t|
             t.string :title
           end
 
-          define :user do |t|
+          xsl.define :user do |t|
             t.string :username
           end
 
-          define :comment do |t|
+          xsl.define :comment do |t|
             t.belongs_to :commentable, :polymorphic => {
               "Article" => :article,
               "User" => :user
@@ -178,7 +200,7 @@ module ActiveApi
       end
 
       it "uses the name of the class to lookup the definition to be used" do
-        element = Element::Collection.new [@comment1, @comment2, @comment3], :node => :comment
+        element = Element::Collection.new [@comment1, @comment2, @comment3], :node => :comment, :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/comments/comment").length.should == 3
         doc.xpath("/comments/comment/article/title").inner_text.should == @article.title
