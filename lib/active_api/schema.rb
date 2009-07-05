@@ -21,7 +21,7 @@ module ActiveApi
 
     class << self
       def define(name)
-        definition = Definition.new :name => name
+        definition = Definition.new :definition_name => name
         yield definition
         write_inheritable_array :definitions, [definition]
       end

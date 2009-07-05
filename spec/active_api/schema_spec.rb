@@ -19,7 +19,7 @@ module ActiveApi
           Schema.definitions.length.should == 1
           definition = Schema.definitions.first
           definition.should be_kind_of(Definition)
-          definition.name.should == :article
+          definition.definition_name.should == :article
         end
 
         it "sets the fields on the definition correctly" do
@@ -37,7 +37,7 @@ module ActiveApi
           Schema.definitions.length.should == 1
           definition = Schema.definitions.first
           definition.should be_kind_of(Definition)
-          definition.name.should == :article
+          definition.definition_name.should == :article
         end
 
         it "sets the fields on the definition correctly" do

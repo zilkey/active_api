@@ -42,7 +42,7 @@ module ActiveApi
       end
 
       def definition
-        Schema.definitions.detect{|definition| definition.name.to_s == node.to_s.singularize}
+        Schema.definitions.detect{|definition| definition.definition_name.to_s == node.to_s.singularize}
       end
 
       def value(field)

@@ -1,10 +1,10 @@
 module ActiveApi
   class Definition
-    attr_reader :name, :fields
+    attr_reader :definition_name, :fields
 
     def initialize(options)
-      @name   = options[:name]
-      @fields = options[:fields] || []
+      @definition_name  = options[:definition_name]
+      @fields           = options[:fields] || []
     end
 
     def attribute(name, type = :string, options = {})
@@ -15,12 +15,20 @@ module ActiveApi
       send type, name, options
     end
 
-    def string(name, options = {})
-      field options.merge(:name => name, :type => :string, :klass => Element::Simple)
-    end
+    Element::Simple.formats.each do |hash|
+      hash.each do |standard_name, xml_name|
+        define_method standard_name do |name, *options|
+          options = options.first || {}
+          field options.merge(:name => name, :type => standard_name, :klass => Element::Simple)
+        end
 
-    def date(name, options = {})
-      field options.merge(:name => name, :type => :date, :klass => Element::Simple)
+        if standard_name != xml_name
+          define_method xml_name do |name, *options|
+            options = options.first || {}
+            field options.merge(:name => name, :type => standard_name, :klass => Element::Simple)
+          end
+        end
+      end
     end
 
     def belongs_to(name, options = {})
@@ -33,10 +41,6 @@ module ActiveApi
 
     def has_many(name, options = {})
       field options.merge(:name => name, :type => :has_many, :klass => Element::Collection)
-    end
-
-    def field(options)
-      self.fields << Field.new(options)
     end
 
     def attributes
@@ -59,5 +63,11 @@ module ActiveApi
       name.to_s.pluralize
     end
 
+    private
+
+    def field(options)
+      self.fields << Field.new(options)
+    end
+    
   end
 end

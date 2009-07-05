@@ -1,48 +1,3 @@
-#:anyURI
-#:base64Binary
-#:boolean
-#:date
-#:dateTime
-#      :dateTimeStamp
-#:decimal
-#      :integer
-#            :long
-#                  :int
-#                        :short
-#                              :byte
-#            :nonNegativeInteger
-#                  :positiveInteger
-#                  :unsignedLong
-#                        :unsignedInt
-#                              :unsignedShort
-#                                    :unsignedByte
-#            :nonPositiveInteger
-#                  :negativeInteger
-#:double
-#:duration
-#      :dayTimeDuration
-#      :yearMonthDuration
-#:float
-#:gDay
-#:gMonth
-#:gMonthDay
-#:gYear
-#:gYearMonth
-#:hexBinary
-#:NOTATION
-#:precisionDecimal
-#:QName
-#:string
-#      :normalizedString
-#            :token
-#                  :language
-#                  :Name
-#                        :NCName
-#                              :ENTITY
-#                              :ID
-#                              :IDREF
-#                  :NMTOKEN
-#:time
 module ActiveApi
   module Element
     class Simple
@@ -50,8 +5,7 @@ module ActiveApi
 
       class << self
         def formats
-          [
-            {:any_uri => :anyURI},
+          standard_names = [
             :base64Binary,
             :boolean,
             :date,
@@ -82,21 +36,29 @@ module ActiveApi
             :gYear,
             :gYearMonth,
             :hexBinary,
-            {:notation => :NOTATION},
             :precisionDecimal,
-            {:qname => :QName},
             :string,
             :normalizedString,
             :token,
             :language,
+            :time
+          ].map do |format|
+            {format.to_s.underscore.to_sym => format}
+          end
+
+          custom_names = [
+            {:any_uri => :anyURI},
+            {:notation => :NOTATION},
+            {:qname => :QName},
             {:name => :Name},
             {:nc_name => :NCName},
             {:entity => :ENTITY},
             {:id => :ID},
             {:idref => :IDREF},
             {:nmtoken => :NMTOKEN},
-            :time
           ]
+
+          standard_names + custom_names
         end
 
         def default_format_proc
