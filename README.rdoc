@@ -158,6 +158,7 @@ While I (Jeff Dean) wrote all of the code in this repo, the code was inspired by
 
 * Mike Dalessio
 * Peter Jaros
+* Ben Woosely
 
 == Development
 
