@@ -95,6 +95,7 @@ module ActiveApi
     end
 
     def formatted_text
+      return nil if text.blank?
       (self.class.format_procs[format] || self.class.default_format_proc).call(text)
     end
 

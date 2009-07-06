@@ -80,7 +80,7 @@ ActiveApi is highly extensible.  The general pattern used to extend ActiveApi is
 
 For example, if you are working with a database that has audit columns such as timestamps, you might want to do this:
 
-    class MyDefinitionClass < Definition
+    class MyDefinitionClass < ActiveApi::Definition
       def timestamps
         date_time :created_at
         date_time :updated_at

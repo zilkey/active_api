@@ -87,7 +87,19 @@ module ActiveApi
         doc.xpath("/articles/article/published_on").first.inner_text.should == "1956-03-05"
       end
 
-      it "emits the correctly formatted element" do
+      it "emits nil when the value is nil" do
+        @schema = Schema.version(:v1) do |xsl|
+          xsl.define :article do |t|
+            t.date :published_on
+          end
+        end
+        @article.published_on = nil
+        element = Collection.new [@article], :node => :article, :schema => @schema
+        doc = element.build_xml.doc
+        doc.xpath("/articles/article/published_on").first.inner_text.should == ""
+      end
+
+      it "emits the correctly formatted attribute" do
         @schema = Schema.version(:v1) do |xsl|
           xsl.define :article do |t|
             t.attribute :published_on, :type => :date
@@ -96,6 +108,18 @@ module ActiveApi
         element = Collection.new [@article], :node => :article, :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article[@published_on=1956-03-05]").should be
+      end
+
+      it "emits nil when the attribute value is nil" do
+        @schema = Schema.version(:v1) do |xsl|
+          xsl.define :article do |t|
+            t.attribute :published_on, :type => :date
+          end
+        end
+        @article.published_on = nil
+        element = Collection.new [@article], :node => :article, :schema => @schema
+        doc = element.build_xml.doc
+        doc.xpath("/articles/article[@published_on='']").should be
       end
     end
 
