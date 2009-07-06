@@ -19,4 +19,3 @@ Spec::Runner.configure do |config|
   config.include SchemaHelper
   config.before(:each) { reset_schema }
 end
-

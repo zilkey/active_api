@@ -1,5 +1,6 @@
 require 'activesupport'
 require 'nokogiri'
+
 require 'uri'
 
 require 'active_api/builder'
