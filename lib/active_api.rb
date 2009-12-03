@@ -1,7 +1,5 @@
-require 'rubygems'
-require 'activesupport'
+require 'active_support'
 require 'nokogiri'
-
 require 'uri'
 
 require 'active_api/builder'
