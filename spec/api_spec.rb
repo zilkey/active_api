@@ -41,7 +41,7 @@ module ActiveApi
       before do
         @schema = Schema.version(:v1) do |xsl|
           xsl.define :article do |t|
-            t.string   :title
+            t.string :title
           end
         end
         @article = Article.new :title => Faker::Company.bs
@@ -107,7 +107,7 @@ module ActiveApi
         end
         element = Collection.new [@article], :node => :article, :schema => @schema
         doc = element.build_xml.doc
-        doc.xpath("/articles/article[@published_on=1956-03-05]").should be
+        doc.xpath("/articles/article[@published_on='1956-03-05']").should_not be_empty
       end
 
       it "emits nil when the attribute value is nil" do
@@ -119,7 +119,7 @@ module ActiveApi
         @article.published_on = nil
         element = Collection.new [@article], :node => :article, :schema => @schema
         doc = element.build_xml.doc
-        doc.xpath("/articles/article[@published_on='']").should be
+        doc.xpath("/articles/article[@published_on='']").should_not be_empty
       end
     end
 
@@ -142,8 +142,8 @@ module ActiveApi
         end
 
         element = Collection.new [@article],
-                                          :node => :article,
-                                          :schema => @schema
+                                 :node => :article,
+                                 :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article/comments/comment/text").first.inner_text.should == @comment.text
       end
@@ -153,14 +153,14 @@ module ActiveApi
       before do
         @schema = Schema.version(:v1) do |xsl|
           xsl.define :article do |t|
-            t.attribute :id, :value => proc {|attribute| "foo" }
-            t.string    :id, :value => proc {|element| "foo" }
-            t.has_many  :comments
+            t.attribute :id, :value => proc {|attribute| "foo attribute" }
+            t.string :id, :value => proc {|element| "foo" }
+            t.has_many :comments
           end
 
           xsl.define :comment do |t|
-            t.string      :article_title, :value => proc{|element| element.object.article.title }
-            t.belongs_to  :user
+            t.string :article_title, :value => proc{|element| element.object.article.title }
+            t.belongs_to :user
           end
 
           xsl.define :user do |t|
@@ -181,32 +181,32 @@ module ActiveApi
 
       it "emits the value of the value proc for attributes" do
         element = Collection.new [@article1],
-                                          :node => :article,
-                                          :schema => @schema
+                                 :node => :article,
+                                 :schema => @schema
         doc = element.build_xml.doc
-        doc.xpath("/articles/article[@id=foo]").should be
+        doc.xpath("/articles/article[@id='foo attribute']").should_not be_empty
       end
 
       it "emits the value of the value proc for elements" do
         element = Collection.new [@article1],
-                                          :node => :article,
-                                          :schema => @schema
+                                 :node => :article,
+                                 :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article/id").first.inner_text.should == "foo"
       end
 
       it "emits the value of the value proc, which is passed an element containing a reference to the object" do
         element = Collection.new [@article1],
-                                          :node => :article,
-                                          :schema => @schema
+                                 :node => :article,
+                                 :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article/comments/comment/article_title").first.inner_text.should == @article1.title
       end
 
       it "emits the value of the value proc, which is passed an element containing a reference all ancestor objects" do
         element = Collection.new [@article1, @article2],
-                                          :node => :article,
-                                          :schema => @schema
+                                 :node => :article,
+                                 :schema => @schema
         doc = element.build_xml.doc
         doc.xpath("/articles/article").length.should == 2
         doc.xpath("/articles/article/comments/comment/user/title").first.inner_text.should == @article1.title

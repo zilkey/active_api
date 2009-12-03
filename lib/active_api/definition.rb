@@ -8,8 +8,12 @@ module ActiveApi
       @fields           = options[:fields] || []
     end
 
-    def attribute(name, type = :string, options = {})
-      field options.merge(:name => name, :type => type, :field_type => :attribute)
+    def attribute(*args)
+      options = args.extract_options!
+      options[:type] ||= :string
+      options.merge! :name => args.first, 
+                     :field_type => :attribute
+      field options
     end
 
     def element(name, type = :string, options = {})
